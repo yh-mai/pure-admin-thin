@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
 import Search from "../search/index.vue";
 import Notice from "../notice/index.vue";
 import { useNav } from "../../hooks/nav";
 import { templateRef } from "@vueuse/core";
 import avatars from "/@/assets/avatars.jpg";
-import { transformI18n } from "/@/plugins/i18n";
 import screenfull from "../screenfull/index.vue";
 import { useRoute, useRouter } from "vue-router";
 import { deviceDetection } from "/@/utils/deviceDetection";
@@ -13,27 +11,21 @@ import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 import { useEpThemeStoreHook } from "/@/store/modules/epTheme";
 import { getParentPaths, findRouteByPath } from "/@/router/utils";
 import { usePermissionStoreHook } from "/@/store/modules/permission";
-import globalization from "/@/assets/svg/globalization.svg?component";
-import { ref, watch, nextTick, onMounted, getCurrentInstance } from "vue";
+import { ref, watch, nextTick, onMounted } from "vue";
 
 const route = useRoute();
-const { locale, t } = useI18n();
 const routers = useRouter().options.routes;
 const menuRef = templateRef<ElRef | null>("menu", null);
-const instance =
-  getCurrentInstance().appContext.config.globalProperties.$storage;
 
 const {
   logout,
   onPanel,
-  changeTitle,
   toggleSideBar,
   handleResize,
   menuSelect,
   resolvePath,
   pureApp,
-  usename,
-  getDropdownItemStyle
+  usename
 } = useNav();
 
 let defaultActive = ref(null);
@@ -56,30 +48,11 @@ onMounted(() => {
 });
 
 watch(
-  () => locale.value,
-  () => {
-    changeTitle(route.meta);
-  }
-);
-
-watch(
   () => route.path,
   () => {
     getDefaultActive(route.path);
   }
 );
-
-function translationCh() {
-  instance.locale = { locale: "zh" };
-  locale.value = "zh";
-  handleResize(menuRef.value);
-}
-
-function translationEn() {
-  instance.locale = { locale: "en" };
-  locale.value = "en";
-  handleResize(menuRef.value);
-}
 </script>
 
 <template>
@@ -124,7 +97,7 @@ function translationEn() {
               :is="useRenderIcon(route.meta && route.meta.icon)"
             ></component>
           </el-icon>
-          <span>{{ transformI18n(route.meta.title, route.meta.i18n) }}</span>
+          <span>{{ route.meta.title }}</span>
           <FontIcon
             v-if="route.meta.extraIcon"
             width="30px"
@@ -143,28 +116,6 @@ function translationEn() {
       <Notice id="header-notice" />
       <!-- 全屏 -->
       <screenfull id="header-screenfull" v-show="!deviceDetection()" />
-      <!-- 国际化 -->
-      <el-dropdown id="header-translation" trigger="click">
-        <globalization />
-        <template #dropdown>
-          <el-dropdown-menu class="translation">
-            <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'zh')"
-              @click="translationCh"
-              ><el-icon class="check-zh" v-show="locale === 'zh'"
-                ><IconifyIconOffline icon="check" /></el-icon
-              >简体中文</el-dropdown-item
-            >
-            <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'en')"
-              @click="translationEn"
-              ><el-icon class="check-en" v-show="locale === 'en'"
-                ><IconifyIconOffline icon="check" /></el-icon
-              >English</el-dropdown-item
-            >
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
       <!-- 退出登陆 -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link">
@@ -178,16 +129,12 @@ function translationEn() {
                 icon="logout-circle-r-line"
                 style="margin: 5px"
               />
-              {{ t("buttons.hsLoginOut") }}</el-dropdown-item
+              退出系统</el-dropdown-item
             >
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <el-icon
-        class="el-icon-setting"
-        :title="t('buttons.hssystemSet')"
-        @click="onPanel"
-      >
+      <el-icon class="el-icon-setting" title="打开项目配置" @click="onPanel">
         <IconifyIconOffline icon="setting" />
       </el-icon>
     </div>

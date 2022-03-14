@@ -3,7 +3,6 @@ import { ref, PropType, nextTick, computed, CSSProperties } from "vue";
 import path from "path";
 import { useNav } from "../../hooks/nav";
 import { childrenType } from "../../types";
-import { transformI18n } from "/@/plugins/i18n";
 import { useAppStoreHook } from "/@/store/modules/app";
 import { useRenderIcon } from "/@/components/ReIcon/src/hooks";
 
@@ -167,14 +166,12 @@ function resolvePath(routePath) {
         :style="getDivStyle"
       >
         <span :style="getMenuTextStyle">
-          {{ transformI18n(onlyOneChild.meta.title, onlyOneChild.meta.i18n) }}
+          {{ onlyOneChild.meta.title }}
         </span>
       </div>
       <template #title>
         <div :style="getDivStyle">
-          <span v-if="!menuMode">{{
-            transformI18n(onlyOneChild.meta.title, onlyOneChild.meta.i18n)
-          }}</span>
+          <span v-if="!menuMode">{{ onlyOneChild.meta.title }}</span>
           <el-tooltip
             v-else
             placement="top"
@@ -182,18 +179,14 @@ function resolvePath(routePath) {
             :disabled="!onlyOneChild.showTooltip"
           >
             <template #content>
-              {{
-                transformI18n(onlyOneChild.meta.title, onlyOneChild.meta.i18n)
-              }}
+              {{ onlyOneChild.meta.title }}
             </template>
             <span
               ref="menuTextRef"
               :style="getMenuTextStyle"
               @mouseover="hoverMenu(onlyOneChild)"
             >
-              {{
-                transformI18n(onlyOneChild.meta.title, onlyOneChild.meta.i18n)
-              }}
+              {{ onlyOneChild.meta.title }}
             </span>
           </el-tooltip>
           <FontIcon
@@ -221,9 +214,7 @@ function resolvePath(routePath) {
           :is="useRenderIcon(props.item.meta && props.item.meta.icon)"
         ></component>
       </el-icon>
-      <span v-if="!menuMode">{{
-        transformI18n(props.item.meta.title, props.item.meta.i18n)
-      }}</span>
+      <span v-if="!menuMode">{{ props.item.meta.title }}</span>
       <el-tooltip
         v-else
         placement="top"
@@ -231,7 +222,7 @@ function resolvePath(routePath) {
         :disabled="!pureApp.sidebar.opened || !props.item.showTooltip"
       >
         <template #content>
-          {{ transformI18n(props.item.meta.title, props.item.meta.i18n) }}
+          {{ props.item.meta.title }}
         </template>
         <div
           ref="menuTextRef"
@@ -239,7 +230,7 @@ function resolvePath(routePath) {
           @mouseover="hoverMenu(props.item)"
         >
           <span :style="getSpanStyle">
-            {{ transformI18n(props.item.meta.title, props.item.meta.i18n) }}
+            {{ props.item.meta.title }}
           </span>
         </div>
       </el-tooltip>
